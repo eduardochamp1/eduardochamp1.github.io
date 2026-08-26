@@ -1,0 +1,20 @@
+---
+import { t, type Locale } from '../i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+---
+<section class="section" id="top" style="padding-top:80px">
+  <h1>
+    {dict.hero.title_a}<br />
+    <span class="accent">×</span> {dict.hero.title_b}
+  </h1>
+  <p style="margin-top:16px;color:var(--muted);font-size:15px">
+    {dict.hero.location} · <a href="mailto:zezouain@gmail.com">zezouain@gmail.com</a>
+  </p>
+  <p style="margin-top:20px;display:flex;gap:20px;flex-wrap:wrap;font-size:14px">
+    <a href="/cv/Jose Zouain CV.pdf" target="_blank" rel="noopener">{dict.hero.cta_cv} ↓</a>
+    <a href="https://github.com/eduardochamp1" target="_blank" rel="noopener">{dict.hero.cta_github} ↗</a>
+    <a href="https://www.linkedin.com/in/joseeduardozouain/" target="_blank" rel="noopener">{dict.hero.cta_linkedin} ↗</a>
+  </p>
+</section>
