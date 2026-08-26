@@ -1,0 +1,41 @@
+---
+import { t, type Locale } from '../i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+
+const COLORS: Record<string, string> = {
+  JavaScript: '#f1e05a',
+  TypeScript: '#3178c6',
+  Python: '#3572A5',
+  HTML: '#e34c26',
+  CSS: '#563d7c',
+  'C++': '#f34b7d',
+  C: '#555555',
+  Java: '#b07219',
+  Shell: '#89e051',
+  Other: '#999999',
+};
+
+let data: { languages: Array<{ name: string; pct: number }> } | null = null;
+try { data = (await import('../data/github.json')).default as any; } catch { data = null; }
+const langs = data?.languages ?? [];
+---
+{langs.length > 0 && (
+  <section class="section" id="languages">
+    <p class="label">{dict.sections.languages}</p>
+    <div style="display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--surface)">
+      {langs.map((l) => (
+        <div style={`width:${l.pct}%;background:${COLORS[l.name] ?? '#999'}`} title={`${l.name} ${l.pct}%`}></div>
+      ))}
+    </div>
+    <ul style="list-style:none;padding:0;margin:16px 0 0;display:flex;flex-wrap:wrap;gap:12px 20px;font-size:13px">
+      {langs.map((l) => (
+        <li style="display:flex;align-items:center;gap:6px">
+          <span style={`width:10px;height:10px;border-radius:50%;background:${COLORS[l.name] ?? '#999'};display:inline-block`}></span>
+          {l.name} <span style="color:var(--muted)">{l.pct}%</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
