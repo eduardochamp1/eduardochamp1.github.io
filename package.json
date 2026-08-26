@@ -1,0 +1,16 @@
+{
+  "name": "eduardochamp1-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node scripts/fetch-github.mjs && astro build",
+    "build:no-fetch": "astro build",
+    "preview": "astro preview",
+    "check:i18n": "node scripts/check-i18n.mjs"
+  },
+  "dependencies": {
+    "astro": "^4.15.0"
+  }
+}
