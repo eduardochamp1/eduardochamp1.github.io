@@ -1,0 +1,13 @@
+---
+import { t, type Locale } from '../i18n';
+import enNow from '../data/now.en.md?raw';
+import ptNow from '../data/now.pt.md?raw';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+const body = (locale === 'en' ? enNow : ptNow).trim();
+---
+<section class="section" id="now">
+  <p class="label">{dict.sections.now}</p>
+  <p style="font-size:17px;line-height:1.55;max-width:60ch">{body}</p>
+</section>
