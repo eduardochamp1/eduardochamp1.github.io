@@ -1,0 +1,40 @@
+---
+import { t, type Locale } from '../i18n';
+import bg from '../data/background.json';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+
+function localized<T extends { en: string; pt: string }>(v: T): string {
+  return v[locale];
+}
+---
+<section class="section" id="background">
+  <p class="label">{dict.sections.background}</p>
+
+  <h2 style="margin-bottom:16px">{dict.background.education}</h2>
+  <ol style="list-style:none;padding:0;margin:0 0 32px">
+    {bg.education.map((e) => (
+      <li style="padding:14px 0;border-top:1px solid var(--line)">
+        <h3>{localized(e.title)}</h3>
+        <p style="color:var(--muted);font-size:13px;margin:4px 0">{e.period} · {e.org}</p>
+        <p style="font-size:14px">{localized(e.description)}</p>
+      </li>
+    ))}
+  </ol>
+
+  <h2 style="margin-bottom:16px">{dict.background.experience}</h2>
+  <ol style="list-style:none;padding:0;margin:0">
+    {bg.experience.map((e) => (
+      <li style="padding:14px 0;border-top:1px solid var(--line)">
+        <h3>{localized(e.title)}</h3>
+        <p style="color:var(--muted);font-size:13px;margin:4px 0">{e.period} · {e.org}</p>
+        <p style="font-size:14px">{localized(e.description)}</p>
+      </li>
+    ))}
+  </ol>
+
+  <p style="margin-top:32px">
+    <a href="/cv/Jose Zouain CV.pdf" target="_blank" rel="noopener">{dict.background.cta_full_cv} ↓</a>
+  </p>
+</section>

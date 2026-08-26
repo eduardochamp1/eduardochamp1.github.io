@@ -1,0 +1,45 @@
+{
+  "education": [
+    {
+      "title": { "en": "Technical Diploma in Electrotechnics", "pt": "Técnico em Eletrotécnica" },
+      "period": "2014–2017",
+      "org": "Instituto Federal do Espírito Santo",
+      "description": { "en": "Technical high school in Electrotechnics.", "pt": "Curso técnico em eletrotécnica integrado ao ensino médio." }
+    },
+    {
+      "title": { "en": "B.Sc. in Electrical Engineering", "pt": "Bacharelado em Engenharia Elétrica" },
+      "period": "2018–2023",
+      "org": "Instituto Federal do Espírito Santo",
+      "description": { "en": "Bachelor of Science in Electrical Engineering.", "pt": "Bacharelado em Engenharia Elétrica." }
+    }
+  ],
+  "experience": [
+    {
+      "title": { "en": "Instructor — programming applied to robotics", "pt": "Professor — programação aplicada à robótica" },
+      "period": "Aug 2022 – Jun 2023",
+      "org": "Instituto Federal do Espírito Santo",
+      "description": {
+        "en": "Instructor and mentor for the 'Meninas Programadoras' project, training 9th-grade female students from public schools in Guarapari and Anchieta (ES) in programming and educational robotics.",
+        "pt": "Professor e monitor do projeto 'Meninas Programadoras', capacitando estudantes do 9º ano de escolas públicas de Guarapari e Anchieta (ES) em programação e robótica educacional."
+      }
+    },
+    {
+      "title": { "en": "IT internship", "pt": "Estágio em TI" },
+      "period": "Jun 2023 – Jul 2023",
+      "org": "Instituto Federal do Espírito Santo — Campus Guarapari",
+      "description": {
+        "en": "Supported IT operations at the IFES Guarapari campus.",
+        "pt": "Apoio às demandas do setor de TI do campus Guarapari do IFES."
+      }
+    },
+    {
+      "title": { "en": "Coordinator — Smart Cane Project", "pt": "Coordenador — Projeto Bengala Inteligente" },
+      "period": "Jul 2022 – Dec 2022",
+      "org": "Instituto Federal do Espírito Santo",
+      "description": {
+        "en": "Co-supervised student project; guided students through Arduino study and prototype development of the smart cane.",
+        "pt": "Co-supervisor do projeto; orientei os estudantes no estudo de Arduino e no desenvolvimento do protótipo da bengala."
+      }
+    }
+  ]
+}
