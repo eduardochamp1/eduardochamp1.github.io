@@ -1,0 +1,29 @@
+{
+  "hero": {
+    "title_a": "Electrical Engineer",
+    "title_b": "Developer",
+    "location": "Guarapari, BR",
+    "cta_cv": "Download CV",
+    "cta_github": "GitHub",
+    "cta_linkedin": "LinkedIn"
+  },
+  "sections": {
+    "now": "Now",
+    "work": "Selected work",
+    "background": "Background",
+    "languages": "Languages",
+    "contact": "Contact"
+  },
+  "nav": { "toggle_lang": "PT" },
+  "work": {
+    "empty": "GitHub data unavailable.",
+    "updated_at": "Auto-updated from GitHub on"
+  },
+  "now": { "updated_at": "Last updated" },
+  "background": {
+    "education": "Education",
+    "experience": "Experience",
+    "cta_full_cv": "Download full CV"
+  },
+  "footer": { "copy": "Copyright © José Zouain" }
+}

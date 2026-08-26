@@ -1,0 +1,42 @@
+---
+import '../styles/global.css';
+import { t, type Locale, pathFor } from '../i18n';
+
+interface Props { locale: Locale; title: string; description: string; }
+const { locale, title, description } = Astro.props;
+const dict = t(locale);
+const other: Locale = locale === 'en' ? 'pt' : 'en';
+---
+<!doctype html>
+<html lang={locale === 'en' ? 'en' : 'pt-BR'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/icon.ico" sizes="any" />
+    <meta name="theme-color" content="#8bc34a" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta name="twitter:card" content="summary" />
+  </head>
+  <body>
+    <header class="wrap" style="padding-top:24px;display:flex;justify-content:space-between;align-items:center">
+      <a href={pathFor(locale)} style="text-decoration:none;font-weight:600">josé zouain</a>
+      <nav style="display:flex;gap:20px;font-size:14px">
+        <a href="#now">{dict.sections.now}</a>
+        <a href="#work">{dict.sections.work}</a>
+        <a href="#background">{dict.sections.background}</a>
+        <a href="#contact">{dict.sections.contact}</a>
+        <a href={pathFor(other)} aria-label={`Switch to ${other.toUpperCase()}`}>{dict.nav.toggle_lang}</a>
+      </nav>
+    </header>
+    <main class="wrap">
+      <slot />
+    </main>
+    <footer class="wrap" style="padding:48px 24px;color:var(--muted);font-size:13px;text-align:center">
+      {dict.footer.copy}
+    </footer>
+  </body>
+</html>

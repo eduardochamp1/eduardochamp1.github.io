@@ -1,0 +1,29 @@
+{
+  "hero": {
+    "title_a": "Engenheiro Eletricista",
+    "title_b": "Desenvolvedor",
+    "location": "Guarapari, BR",
+    "cta_cv": "Baixar CV",
+    "cta_github": "GitHub",
+    "cta_linkedin": "LinkedIn"
+  },
+  "sections": {
+    "now": "Agora",
+    "work": "Projetos em destaque",
+    "background": "Trajetória",
+    "languages": "Linguagens",
+    "contact": "Contato"
+  },
+  "nav": { "toggle_lang": "EN" },
+  "work": {
+    "empty": "Dados do GitHub indisponíveis.",
+    "updated_at": "Atualizado automaticamente do GitHub em"
+  },
+  "now": { "updated_at": "Última atualização" },
+  "background": {
+    "education": "Formação",
+    "experience": "Experiência",
+    "cta_full_cv": "Baixar CV completo"
+  },
+  "footer": { "copy": "Copyright © José Zouain" }
+}
