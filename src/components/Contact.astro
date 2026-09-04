@@ -1,0 +1,16 @@
+---
+import { t, type Locale } from '../i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const dict = t(locale);
+---
+<section class="section" id="contact">
+  <p class="label">{dict.sections.contact}</p>
+  <p style="font-size:17px">
+    <a href="mailto:zezouain@gmail.com">zezouain@gmail.com</a>
+  </p>
+  <p style="margin-top:12px;display:flex;gap:20px;flex-wrap:wrap;font-size:14px">
+    <a href="https://github.com/eduardochamp1" target="_blank" rel="noopener">GitHub ↗</a>
+    <a href="https://www.linkedin.com/in/joseeduardozouain/" target="_blank" rel="noopener">LinkedIn ↗</a>
+  </p>
+</section>
