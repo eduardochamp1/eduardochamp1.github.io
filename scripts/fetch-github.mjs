@@ -52,10 +52,19 @@ async function main() {
   const otherPct = +langsSorted.slice(6).reduce((s, l) => s + l.pct, 0).toFixed(1);
   const languages = otherPct > 0 ? [...top, { name: 'Other', bytes: 0, pct: otherPct }] : top;
 
+  let profileReadmeHtml = null;
+  try {
+    const readme = await fetch(`https://api.github.com/repos/${USER}/${USER}/readme`, {
+      headers: { ...headers, accept: 'application/vnd.github.html' },
+    });
+    if (readme.ok) profileReadmeHtml = await readme.text();
+  } catch { /* silently skip */ }
+
   const out = {
     fetched_at: new Date().toISOString(),
     featured,
     languages,
+    profile_readme: profileReadmeHtml,
   };
 
   mkdirSync(dirname(OUT), { recursive: true });

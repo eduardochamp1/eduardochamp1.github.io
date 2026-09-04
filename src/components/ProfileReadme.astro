@@ -1,0 +1,15 @@
+---
+let data: { profile_readme: string | null } | null = null;
+try { data = (await import('../data/github.json')).default as any; } catch {}
+const html = data?.profile_readme;
+---
+{html && (
+  <section class="section" id="profile-readme">
+    <div class="readme" set:html={html}></div>
+    <style>
+      .readme :global(img) { max-width:100%; height:auto; }
+      .readme :global(h1), .readme :global(h2) { margin-top:24px; }
+      .readme :global(pre) { background:var(--surface); padding:12px; overflow:auto; }
+    </style>
+  </section>
+)}
