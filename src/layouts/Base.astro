@@ -15,7 +15,9 @@ const other: Locale = locale === 'en' ? 'pt' : 'en';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="icon" href="/icon.ico" sizes="any" />
+    <link rel="icon" href="/icon.ico" sizes="32x32" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="alternate" hreflang={other === 'en' ? 'en' : 'pt-BR'} href={pathFor(other)} />
     <meta name="theme-color" content="#8bc34a" />
     <meta property="og:type" content="website" />
