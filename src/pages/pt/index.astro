@@ -1,23 +1,23 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Hero from '../../components/Hero.astro';
-import ProfileReadme from '../../components/ProfileReadme.astro';
-import Now from '../../components/Now.astro';
+import Skills from '../../components/Skills.astro';
+import Path from '../../components/Path.astro';
+import Systems from '../../components/Systems.astro';
 import SelectedWork from '../../components/SelectedWork.astro';
-import Languages from '../../components/Languages.astro';
-import Background from '../../components/Background.astro';
 import Contact from '../../components/Contact.astro';
+import QuickView from '../../components/QuickView.astro';
 ---
 <Base
   locale="pt"
   title="José Zouain — Engenheiro Eletricista × Desenvolvedor"
-  description="Portfólio e currículo de José Eduardo Vilela Zouain — Engenheiro Eletricista e Desenvolvedor."
+  description="Currículo vivo de José Eduardo Vilela Zouain — Engenheiro Eletricista, Analista de Desempenho em Excelência Operacional."
 >
   <Hero locale="pt" />
-  <ProfileReadme />
-  <Now locale="pt" />
-  <SelectedWork locale="pt" />
-  <Languages locale="pt" />
-  <Background locale="pt" />
+  <Skills locale="pt" />
+  <Path locale="pt" />
+  <Systems locale="pt" />
+  <div class="cv-section"><div class="wrap wrap--wide"><SelectedWork locale="pt" /></div></div>
   <Contact locale="pt" />
+  <QuickView locale="pt" />
 </Base>

@@ -1,16 +1,28 @@
 ---
-import { t, type Locale } from '../i18n';
+import { type Locale } from '../i18n';
+import { profile, ui } from '../data/cv';
 interface Props { locale: Locale }
 const { locale } = Astro.props;
-const dict = t(locale);
+const u = ui[locale];
 ---
-<section class="section" id="contact">
-  <p class="label">{dict.sections.contact}</p>
-  <p style="font-size:17px">
-    <a href="mailto:zezouain@gmail.com">zezouain@gmail.com</a>
-  </p>
-  <p style="margin-top:12px;display:flex;gap:20px;flex-wrap:wrap;font-size:14px">
-    <a href="https://github.com/eduardochamp1" target="_blank" rel="noopener">GitHub ↗</a>
-    <a href="https://www.linkedin.com/in/joseeduardozouain/" target="_blank" rel="noopener">LinkedIn ↗</a>
-  </p>
+<section class="cv-section" id="contato">
+  <div class="cv-section__in contact">
+    <p class="kicker">04 — {u.nav.contact}</p>
+    <h2 class="cv-h2">{u.contactTitle}</h2>
+    <a class="big" href={`mailto:${profile.email}`}>{profile.email}</a>
+    <p class="row">
+      <a href={profile.phoneHref}>{profile.phone}</a>
+      <a href={profile.linkedin} target="_blank" rel="noopener">{profile.linkedinLabel} ↗</a>
+      <a href={profile.github} target="_blank" rel="noopener">{profile.githubLabel} ↗</a>
+      <a href={profile.cv} target="_blank" rel="noopener" style="font-weight:600">{u.cv} ↓</a>
+      <span class="muted">{u.english}</span>
+    </p>
+  </div>
 </section>
+
+<style>
+  .contact { padding: 80px 24px 56px; gap: 24px; }
+  .big { font-size: clamp(28px, 5.5vw, 60px); font-weight: 700; letter-spacing: -0.025em; line-height: 1.05; text-decoration-color: var(--accent); word-break: break-word; }
+  .row { margin: 0; display: flex; gap: 12px 28px; flex-wrap: wrap; font-size: 15px; }
+  .muted { color: var(--muted); }
+</style>

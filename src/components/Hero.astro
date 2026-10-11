@@ -1,20 +1,61 @@
 ---
-import { t, type Locale } from '../i18n';
+import { type Locale } from '../i18n';
+import { profile, ui, L } from '../data/cv';
 interface Props { locale: Locale }
 const { locale } = Astro.props;
-const dict = t(locale);
+const u = ui[locale];
 ---
-<section class="section" id="top" style="padding-top:80px">
-  <h1>
-    {dict.hero.title_a}<br />
-    <span class="accent">×</span> {dict.hero.title_b}
-  </h1>
-  <p style="margin-top:16px;color:var(--muted);font-size:15px">
-    {dict.hero.location} · <a href="mailto:zezouain@gmail.com">zezouain@gmail.com</a>
-  </p>
-  <p style="margin-top:20px;display:flex;gap:20px;flex-wrap:wrap;font-size:14px">
-    <a href="/cv/Jose Zouain CV.pdf" target="_blank" rel="noopener">{dict.hero.cta_cv} ↓</a>
-    <a href="https://github.com/eduardochamp1" target="_blank" rel="noopener">{dict.hero.cta_github} ↗</a>
-    <a href="https://www.linkedin.com/in/joseeduardozouain/" target="_blank" rel="noopener">{dict.hero.cta_linkedin} ↗</a>
-  </p>
+<section class="hero" id="top" data-hero>
+  <canvas class="hero__canvas" data-organism aria-hidden="true"></canvas>
+  <div class="hero__in">
+    <div class="hero__text">
+      <p class="hero__kicker">● {u.live} · {profile.location}</p>
+      <h1 class="hero__name">{profile.name}</h1>
+      <p class="hero__tag">{L(profile.tagA, locale)} <span class="accent">×</span> {L(profile.tagB, locale)}</p>
+      <div class="badges">
+        {profile.badges.map((b) => <span class="badge">{L(b, locale)}</span>)}
+      </div>
+      <p class="hero__sum">{profile.summary[locale][0]}</p>
+      <p class="links">
+        <a href={profile.cv} target="_blank" rel="noopener" style="font-weight:600">{u.cv} ↓</a>
+        <a href={profile.linkedin} target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a href={profile.github} target="_blank" rel="noopener">GitHub ↗</a>
+        <a href={`mailto:${profile.email}`}>{profile.email}</a>
+      </p>
+    </div>
+    <div class="hero__photo">
+      <div class="ring"><img src={profile.photo} alt={profile.name} width="240" height="240" /></div>
+    </div>
+  </div>
+  <p class="hero__hint" aria-hidden="true">↓ {u.nav.path}</p>
 </section>
+
+<script>
+  import { initOrganism } from '../scripts/organism';
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  const c = hero?.querySelector<HTMLCanvasElement>('[data-organism]');
+  if (hero && c) initOrganism(c, hero);
+</script>
+
+<style>
+  .hero { position: relative; min-height: calc(100vh - 59px); display: flex; align-items: center; overflow: hidden; }
+  .hero__canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .hero__in {
+    position: relative; max-width: var(--max-wide); width: 100%; margin: 0 auto; padding: 64px 24px 96px;
+    display: flex; flex-wrap: wrap; gap: 48px; align-items: center; pointer-events: none;
+  }
+  .hero__text { display: flex; flex-direction: column; gap: 22px; flex: 2 1 480px; min-width: 0; pointer-events: auto; }
+  .hero__kicker { margin: 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-ink); }
+  .hero__name { margin: 0; font-size: clamp(44px, 7.5vw, 104px); line-height: .98; letter-spacing: -0.035em; text-wrap: balance; }
+  .hero__tag { margin: 0; font-size: clamp(20px, 2.4vw, 28px); font-weight: 600; letter-spacing: -0.01em; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; }
+  .badge { font-size: 13px; padding: 5px 11px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
+  .hero__sum { margin: 0; color: var(--muted); font-size: 16px; max-width: 620px; text-wrap: pretty; background: color-mix(in srgb, var(--bg) 70%, transparent); }
+  .links { margin: 0; display: flex; gap: 20px; flex-wrap: wrap; font-size: 14px; align-items: center; }
+  .hero__photo { display: flex; justify-content: center; flex: 1 1 240px; }
+  .ring { position: relative; width: min(240px, 60vw); aspect-ratio: 1; }
+  .ring::before { content: ''; position: absolute; inset: -14px; border-radius: 50%; border: 1px dashed var(--accent); opacity: .6; animation: cvspin 40s linear infinite; }
+  .ring::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid var(--line); }
+  .ring img { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+  .hero__hint { position: absolute; left: 0; right: 0; bottom: 20px; margin: 0; text-align: center; font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); pointer-events: none; }
+</style>

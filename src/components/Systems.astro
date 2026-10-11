@@ -1,0 +1,38 @@
+---
+import { type Locale } from '../i18n';
+import { systems, skillGroups, profile, ui, L } from '../data/cv';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const u = ui[locale];
+const skillLabel: Record<string, string> = Object.fromEntries(skillGroups.flatMap((g) => g.items).map((s) => [s.id, L(s.label, locale)]));
+---
+<section class="cv-section" id="sistemas">
+  <div class="cv-section__in">
+    <div class="cv-head">
+      <p class="kicker">03 — {u.nav.systems}</p>
+      <h2 class="cv-h2">{u.systemsTitle}</h2>
+      <p class="cv-lead">{profile.summary[locale][1]}</p>
+    </div>
+    <div class="cards">
+      {systems.map((s, i) => (
+        <article class="card">
+          <span class="card__n">{String(i + 1).padStart(2, '0')}</span>
+          <h3 class="card__t">{L(s.title, locale)}</h3>
+          <p class="card__d">{L(s.desc, locale)}</p>
+          <div class="card__tags">{s.tags.map((t) => <span>{skillLabel[t]}</span>)}</div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px; }
+  .card { border: 1px solid var(--line); padding: 20px; display: flex; flex-direction: column; gap: 10px; background: var(--surface); transition: border-color .2s; }
+  .card:hover { border-color: var(--accent); }
+  .card__n { font-family: var(--font-mono); font-size: 11px; color: var(--accent-ink); }
+  .card__t { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+  .card__d { margin: 0; color: var(--muted); font-size: 14px; text-wrap: pretty; }
+  .card__tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 6px; }
+  .card__tags span { font-family: var(--font-mono); font-size: 11px; color: var(--muted); border: 1px solid var(--line); padding: 2px 8px; border-radius: 999px; }
+</style>

@@ -1,0 +1,60 @@
+---
+import { type Locale } from '../i18n';
+import { profile, quickFacts, ui, L } from '../data/cv';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const u = ui[locale];
+---
+<dialog class="qv" data-quick aria-labelledby="qv-title">
+  <div class="qv__panel">
+    <div class="qv__head">
+      <img src={profile.photo} alt="" width="56" height="56" />
+      <div class="qv__who">
+        <span class="kicker kicker--accent">{u.quick}</span>
+        <span class="qv__name" id="qv-title">{profile.name}</span>
+      </div>
+      <button class="btn" type="button" data-quick-close>{u.close} ×</button>
+    </div>
+    <div class="qv__timer"><span></span></div>
+    <dl class="qv__facts">
+      {quickFacts.map((q) => (
+        <div><dt>{L(q.k, locale)}</dt><dd>{L(q.v, locale)}</dd></div>
+      ))}
+    </dl>
+    <div class="qv__actions">
+      <a class="qa qa--accent" href={profile.cv} target="_blank" rel="noopener">{u.cv} ↓</a>
+      <a class="qa" href={`mailto:${profile.email}`}>{profile.email}</a>
+      <a class="qa" href={profile.linkedin} target="_blank" rel="noopener">LinkedIn ↗</a>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  const dlg = document.querySelector<HTMLDialogElement>('[data-quick]');
+  if (dlg) {
+    document.querySelectorAll('[data-quick-open]').forEach((b) => b.addEventListener('click', () => dlg.showModal()));
+    dlg.querySelector('[data-quick-close]')?.addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  }
+</script>
+
+<style>
+  .qv { border: 0; padding: 20px; background: transparent; max-width: 800px; width: 100%; max-height: 100vh; color: var(--fg); }
+  .qv::backdrop { background: color-mix(in srgb, var(--bg) 72%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .qv__panel { background: var(--bg); border: 1px solid var(--line); padding: 28px; display: flex; flex-direction: column; gap: 22px; box-shadow: 0 30px 80px rgba(0, 0, 0, .35); }
+  .qv__head { display: flex; align-items: center; gap: 16px; }
+  .qv__head img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent); flex: none; }
+  .qv__who { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+  .qv__name { font-size: 20px; font-weight: 700; letter-spacing: -0.015em; }
+  .qv__timer { height: 2px; background: var(--line); position: relative; overflow: hidden; }
+  .qv__timer span { position: absolute; inset: 0; background: var(--accent); transform-origin: left; transform: scaleX(0); }
+  .qv[open] .qv__timer span { animation: cvtimer 30s linear forwards; }
+  .qv__facts { margin: 0; display: flex; flex-direction: column; }
+  .qv__facts div { display: grid; grid-template-columns: minmax(90px, 120px) 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .qv__facts dt { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
+  .qv__facts dd { margin: 0; font-size: 15px; text-wrap: pretty; }
+  .qv__actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .qa { height: 40px; padding: 0 16px; display: flex; align-items: center; border: 1px solid var(--line); text-decoration: none; font-size: 14px; border-radius: 2px; }
+  .qa--accent { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }
+  .qa--accent:hover { color: var(--on-accent); }
+</style>

@@ -1,0 +1,111 @@
+---
+import { type Locale } from '../i18n';
+import { entries, skillGroups, ui, L } from '../data/cv';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const u = ui[locale];
+
+const skillLabel: Record<string, string> = Object.fromEntries(skillGroups.flatMap((g) => g.items).map((s) => [s.id, L(s.label, locale)]));
+const count = (id: string) => entries.filter((e) => e.skills.includes(id)).length;
+const used = new Set(entries.flatMap((e) => e.skills));
+const graph = {
+  entries: entries.map((e) => ({ id: e.id, type: e.type, label: L(e.short, locale), skills: e.skills })),
+  skills: skillGroups.flatMap((g) => g.items).filter((s) => used.has(s.id)).map((s) => ({ id: s.id, label: skillLabel[s.id] })),
+  skillLabel,
+  points: locale === 'pt' ? 'pontos na linha' : 'points on the line',
+};
+---
+<section class="cv-section" id="competencias">
+  <div class="cv-section__in">
+    <div class="cv-head">
+      <p class="kicker">01 — {u.nav.skills}</p>
+      <h2 class="cv-h2">{u.skillsTitle}</h2>
+    </div>
+    <div class="grid">
+      <div class="netcol">
+        <div class="netbox" data-netbox>
+          <canvas data-network aria-label={u.networkHint}></canvas>
+          <p class="nethint">{u.networkHint}</p>
+        </div>
+        <div class="legend">
+          <span><i class="lg lg--work"></i>{u.legendWork}</span>
+          <span><i class="lg lg--edu"></i>{u.legendEdu}</span>
+          <span><i class="lg lg--viv"></i>{u.legendViv}</span>
+          <span><i class="lg lg--skill"></i>{u.legendSkill}</span>
+        </div>
+      </div>
+      <div class="groups">
+        {skillGroups.map((g) => (
+          <div class="group">
+            <p class="kicker kicker--accent">{L(g.label, locale)}</p>
+            <div class="chips">
+              {g.items.map((s) => (
+                <button class="chip" type="button" data-skill={s.id} aria-pressed="false">{skillLabel[s.id]}<span class="chip__n">{count(s.id)}</span></button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+    <div class="skillbar" data-skillbar aria-live="polite">
+      <span class="muted" data-skillbar-empty>{u.none}</span>
+      <div class="skillbar__on" data-skillbar-active hidden>
+        <span class="skillbar__label" data-skillbar-label></span>
+        <span class="muted">{u.usedIn}</span>
+        <span class="skillbar__list" data-skillbar-list></span>
+        <button class="skillbar__clear" type="button" data-skill-clear>{u.clear}</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="pill" data-skillpill hidden>
+  <span class="pulse-dot"></span>
+  <span class="pill__txt"><span class="muted">{u.skillFloat}:</span> <strong data-skillpill-label></strong> · <span data-skillpill-count></span></span>
+  <button class="btn" type="button" data-skill-clear>{u.clear} ×</button>
+</div>
+
+<script type="application/json" id="cv-graph" set:html={JSON.stringify(graph)}></script>
+
+<script>
+  import '../scripts/skills-ui';
+  import { initNetwork } from '../scripts/network';
+  const box = document.querySelector<HTMLElement>('[data-netbox]');
+  const c = box?.querySelector<HTMLCanvasElement>('[data-network]');
+  const data = document.getElementById('cv-graph');
+  if (box && c && data) initNetwork(c, box, JSON.parse(data.textContent || '{}'));
+</script>
+
+<style>
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 32px 48px; align-items: start; }
+  .netcol { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .netbox { position: relative; height: clamp(420px, 60vh, 580px); border: 1px solid var(--line); border-radius: 2px; background: var(--surface); overflow: hidden; }
+  .netbox canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .nethint { position: absolute; left: 14px; top: 12px; margin: 0; font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; pointer-events: none; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-family: var(--font-mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .lg { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+  .lg--work { background: var(--accent); }
+  .lg--edu { border: 1.5px solid var(--fg); }
+  .lg--viv { border: 1.5px dashed var(--accent); }
+  .lg--skill { width: 6px; height: 6px; background: var(--muted); }
+  .groups { display: flex; flex-direction: column; border-top: 1px solid var(--line); min-width: 0; }
+  .group { display: flex; flex-direction: column; gap: 10px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .skillbar { min-height: 58px; border: 1px solid var(--line); background: var(--surface); padding: 12px 16px; display: flex; align-items: center; font-size: 14px; }
+  .skillbar__on { display: flex; gap: 10px 14px; align-items: center; flex-wrap: wrap; width: 100%; }
+  .skillbar__on[hidden] { display: none; }
+  .skillbar__label { font-family: var(--font-mono); color: var(--accent-ink); font-weight: 600; }
+  .skillbar__list { display: flex; gap: 8px; flex-wrap: wrap; }
+  .skillbar__clear { margin-left: auto; background: transparent; border: 0; color: var(--muted); font-size: 13px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .muted { color: var(--muted); }
+  .pill {
+    position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 40;
+    display: flex; align-items: center; gap: 12px; padding: 8px 8px 8px 16px;
+    border: 1px solid var(--accent); background: var(--bg); border-radius: 999px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, .3); font-size: 13px; max-width: calc(100vw - 32px);
+  }
+  .pill[hidden] { display: none; }
+  .pill__txt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pill .btn { height: 30px; font-size: 12px; background: var(--surface); flex: none; }
+</style>

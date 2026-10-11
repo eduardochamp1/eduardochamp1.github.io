@@ -1,10 +1,11 @@
 ---
 import '../styles/global.css';
-import { t, type Locale, pathFor } from '../i18n';
+import { type Locale, pathFor } from '../i18n';
+import { ui } from '../data/cv';
 
 interface Props { locale: Locale; title: string; description: string; }
 const { locale, title, description } = Astro.props;
-const dict = t(locale);
+const u = ui[locale];
 const other: Locale = locale === 'en' ? 'pt' : 'en';
 ---
 <!doctype html>
@@ -15,28 +16,57 @@ const other: Locale = locale === 'en' ? 'pt' : 'en';
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="icon" href="/icon.ico" sizes="any" />
+    <link rel="alternate" hreflang={other === 'en' ? 'en' : 'pt-BR'} href={pathFor(other)} />
     <meta name="theme-color" content="#8bc34a" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta name="twitter:card" content="summary" />
+    <script is:inline>
+      try { var t = localStorage.getItem('cv-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+    </script>
   </head>
   <body>
-    <header class="wrap" style="padding-top:24px;display:flex;justify-content:space-between;align-items:center">
-      <a href={pathFor(locale)} style="text-decoration:none;font-weight:600">josé zouain</a>
-      <nav style="display:flex;gap:20px;font-size:14px">
-        <a href="#now">{dict.sections.now}</a>
-        <a href="#work">{dict.sections.work}</a>
-        <a href="#background">{dict.sections.background}</a>
-        <a href="#contact">{dict.sections.contact}</a>
-        <a href={pathFor(other)} aria-label={`Switch to ${other.toUpperCase()}`}>{dict.nav.toggle_lang}</a>
-      </nav>
+    <header class="topbar">
+      <div class="topbar__in">
+        <a href={pathFor(locale)} class="brand"><span class="pulse-dot"></span>josé zouain</a>
+        <nav class="nav">
+          <a href="#competencias">{u.nav.skills}</a>
+          <a href="#trajetoria">{u.nav.path}</a>
+          <a href="#sistemas">{u.nav.systems}</a>
+          <a href="#contato">{u.nav.contact}</a>
+        </nav>
+        <div class="ctrls">
+          <button class="btn btn--accent" type="button" data-quick-open>{u.quick}</button>
+          <a class="btn" href={pathFor(other)} hreflang={other === 'en' ? 'en' : 'pt-BR'}>{u.lang}</a>
+          <button class="btn" type="button" data-theme-toggle data-label-light={u.themeLight} data-label-dark={u.themeDark}>{u.themeLight}</button>
+        </div>
+      </div>
     </header>
-    <main class="wrap">
+    <main>
       <slot />
     </main>
-    <footer class="wrap" style="padding:48px 24px;color:var(--muted);font-size:13px;text-align:center">
-      {dict.footer.copy}
-    </footer>
+    <footer class="foot">{u.copy}</footer>
+    <script>
+      import '../scripts/theme';
+    </script>
   </body>
 </html>
+
+<style>
+  .topbar {
+    position: sticky; top: 0; z-index: 30;
+    background: color-mix(in srgb, var(--bg) 84%, transparent);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar__in {
+    max-width: var(--max-wide); margin: 0 auto; padding: 12px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap;
+  }
+  .brand { text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+  .nav { display: flex; gap: 20px; font-size: 14px; flex-wrap: wrap; align-items: center; }
+  .ctrls { display: flex; gap: 8px; align-items: center; }
+  .ctrls .btn:not(.btn--accent) { min-width: 44px; justify-content: center; }
+  .foot { padding: 32px 24px 48px; color: var(--muted); font-size: 13px; text-align: center; }
+</style>

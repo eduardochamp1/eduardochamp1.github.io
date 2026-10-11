@@ -1,0 +1,147 @@
+---
+import { type Locale } from '../i18n';
+import { entries, skillGroups, profile, ui, L } from '../data/cv';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const u = ui[locale];
+
+type Entry = (typeof entries)[number];
+const skillLabel: Record<string, string> = Object.fromEntries(skillGroups.flatMap((g) => g.items).map((s) => [s.id, L(s.label, locale)]));
+const chrono = [...entries].sort((a, b) => a.start - b.start || (a.end ?? 2100) - (b.end ?? 2100));
+const eraOf = (e: Entry) => (e.start < 2018 ? 0 : e.start < 2023.7 ? 1 : e.start < 2024.7 ? 2 : 3);
+const eras = u.eras.map((er) => ({ ...er, rows: [] as Entry[] }));
+chrono.forEach((e) => eras[eraOf(e)].rows.push(e));
+const years: [string, string][] = [['2014', 'tecnico'], ['2018', 'bacharel'], ['2022', 'cert_js'], ['2023', 'estagio'], ['2024', 'mba'], [locale === 'pt' ? 'hoje' : 'now', 'analista']];
+const types = u.types as Record<string, string>;
+const OPEN = 'analista';
+---
+<section class="cv-section" id="trajetoria">
+  <div class="cv-section__in head">
+    <p class="kicker">02 — {u.nav.path}</p>
+    <h2 class="cv-h2">{u.pathTitle}</h2>
+    <p class="cv-lead">{profile.summary[locale][2]}</p>
+  </div>
+
+  <div class="years">
+    <div class="years__in">
+      {years.map(([label, id]) => <button class="yr" type="button" data-year={id}>{label}</button>)}
+    </div>
+    <div class="years__bar"><span data-prog></span></div>
+  </div>
+
+  <div class="body">
+    <div class="spine" data-spine>
+      <span class="spine__base"></span>
+      <span class="spine__fill" data-fill><span class="spine__spark"></span></span>
+      {eras.map((era) => (
+        <div class="era">
+          <div class="era__head">
+            <span class="era__n">{era.n}</span>
+            <span class="era__t">{era.t}</span>
+            <span class="era__y">{era.y}</span>
+          </div>
+          {era.rows.map((e) => {
+            const hasMore = e.groups.length > 0 || !!(e.lines && e.lines.length);
+            const open = e.id === OPEN && hasMore;
+            return (
+              <article class:list={['row', { 'is-open': open }]} data-row={e.id} data-skills={e.skills.join(' ')}>
+                <span class="row__node"></span>
+                <svg class="row__branch" width="48" height="24" viewBox="0 0 48 24" aria-hidden="true"><path d="M0 18 C 14 18, 18 6, 36 8 S 46 14, 48 14" /></svg>
+                <div class="row__card">
+                  <p class="row__meta"><span>{types[e.type]}</span> · {L(e.period, locale)}</p>
+                  <h3 class="row__role">{L(e.role, locale)}</h3>
+                  {e.org && <p class="row__org">{[e.org, e.place].filter(Boolean).join(' · ')}</p>}
+                  {e.desc && <p class="row__desc">{L(e.desc, locale)}</p>}
+                  {hasMore && (
+                    <div class="row__more" id={`more-${e.id}`}>
+                      {e.groups.map((g) => (
+                        <div class="grp">
+                          {g.title && <p class="grp__t">{L(g.title, locale)}</p>}
+                          <ul>{g.items.map((it) => <li><span>—</span><span>{L(it, locale)}</span></li>)}</ul>
+                        </div>
+                      ))}
+                      {e.lines && e.lines.length > 0 && (
+                        <div class="grp">
+                          <p class="kicker" style="font-weight:400">{u.lines}</p>
+                          <div class="lines">{e.lines.map((ln) => <span>{ln}</span>)}</div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <div class="row__foot">
+                    {e.skills.map((s) => <button class="chip chip--sm" type="button" data-skill={s} aria-pressed="false">{skillLabel[s]}</button>)}
+                    {hasMore && (
+                      <button class="row__toggle" type="button" data-expand aria-expanded={String(open)} aria-controls={`more-${e.id}`} data-l-open={u.expand} data-l-close={u.collapse}>{open ? u.collapse : u.expand}</button>
+                    )}
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  import '../scripts/energy';
+</script>
+
+<style>
+  .head { padding-bottom: 24px; gap: 12px; }
+  .years {
+    position: sticky; top: 59px; z-index: 20;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .years__in { max-width: var(--max-wide); margin: 0 auto; padding: 10px 24px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .yr { height: 30px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--muted); font-family: var(--font-mono); font-size: 12px; cursor: pointer; transition: all .25s; }
+  .yr.is-passed { border-color: var(--accent); color: var(--fg); }
+  .yr.is-active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .years__bar { height: 2px; position: relative; overflow: hidden; }
+  .years__bar span { position: absolute; inset: 0; background: var(--accent); transform-origin: left; transform: scaleX(0); box-shadow: 0 0 8px var(--accent); }
+
+  .body { max-width: var(--max-wide); margin: 0 auto; padding: 40px 24px 80px; }
+  .spine { position: relative; padding-left: 64px; }
+  .spine__base { position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: var(--line); }
+  .spine__fill { position: absolute; left: 20px; top: 0; width: 2px; height: 0; background: var(--accent); box-shadow: 0 0 10px var(--accent), 0 0 2px var(--accent); }
+  .spine__spark { position: absolute; left: 50%; bottom: -5px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: var(--accent); animation: cvpulse 1.4s infinite; }
+
+  .era { display: flex; flex-direction: column; gap: 16px; padding-bottom: 40px; }
+  .era__head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; padding-top: 8px; }
+  .era__n { font-family: var(--font-mono); font-size: 12px; color: var(--accent-ink); }
+  .era__t { font-size: clamp(22px, 3vw, 30px); font-weight: 700; letter-spacing: -0.02em; }
+  .era__y { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+
+  .row { position: relative; opacity: .4; transition: opacity .6s; }
+  .row.is-on { opacity: 1; }
+  .row.is-dim { opacity: .25; }
+  .row__node { position: absolute; left: -51px; top: 22px; width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 2px solid var(--line); transition: all .5s; }
+  .row.is-on .row__node, .row.is-hit .row__node { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 12px var(--accent); }
+  .row.is-hit .row__node { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 30%, transparent), 0 0 18px var(--accent); }
+  .row__branch { position: absolute; left: -36px; top: 12px; overflow: visible; pointer-events: none; }
+  .row__branch path { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 60; stroke-dashoffset: 60; transition: stroke-dashoffset .9s ease, stroke .5s; }
+  .row.is-on .row__branch path, .row.is-hit .row__branch path { stroke: var(--accent); stroke-dashoffset: 0; }
+
+  .row__card { border: 1px solid var(--line); background: var(--surface); padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; transform: translateX(12px); transition: border-color .3s, transform .6s; }
+  .row.is-on .row__card { transform: none; }
+  .row.is-hit .row__card, .row.is-sel .row__card { border-color: var(--accent); }
+  .row__meta { margin: 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .row__meta span { color: var(--accent-ink); }
+  .row__role { margin: 0; font-size: clamp(17px, 2vw, 21px); line-height: 1.25; letter-spacing: -0.01em; text-wrap: balance; }
+  .row__org { margin: 0; color: var(--muted); font-size: 14px; }
+  .row__desc { margin: 2px 0 0; font-size: 15px; max-width: 760px; text-wrap: pretty; }
+  .row__more { display: none; flex-direction: column; gap: 16px; padding-top: 8px; }
+  .row.is-open .row__more { display: flex; }
+  .grp { display: flex; flex-direction: column; gap: 6px; }
+  .grp__t { margin: 0; font-size: 14px; font-weight: 600; }
+  .grp ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .grp li { display: grid; grid-template-columns: 14px 1fr; gap: 6px; font-size: 14px; max-width: 760px; text-wrap: pretty; }
+  .grp li span:first-child { color: var(--accent); }
+  .lines { display: flex; flex-wrap: wrap; gap: 6px; }
+  .lines span { font-family: var(--font-mono); font-size: 12px; padding: 5px 10px; border-left: 2px solid var(--accent); background: var(--bg); }
+  .row__foot { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding-top: 4px; }
+  .row__toggle { margin-left: auto; background: transparent; border: 0; padding: 4px 0; font-size: 13px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--accent); }
+</style>
